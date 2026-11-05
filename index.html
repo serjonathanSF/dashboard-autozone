@@ -3,406 +3,492 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoZone | Inbound Operations Dashboard</title>
-  <!-- Chart.js para gráficos e SheetJS para leitura de planilhas Excel/CSV -->
+  <title>AutoZone | Inbound Operations - Futuristic HUD</title>
+  
+  <!-- Fontes Futuristicas Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bibliotecas: Chart.js, SheetJS, FontAwesome -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     :root {
-      --bg-primary: #121212;
-      --bg-secondary: #1e1e1e;
-      --bg-card: #252526;
-      --text-main: #f4f4f4;
-      --text-muted: #aaaaaa;
-      --border-color: #333333;
-      --autozone-red: #d8232a;
-      --autozone-orange: #f37021;
-      --autozone-hover: #ff2a32;
-      --input-bg: #2d2d2d;
+      --bg-main: #060913;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-panel: #0d1527;
+      --text-bright: #00f0ff;
+      --text-main: #e2e8f0;
+      --text-muted: #64748b;
+      --border-neon: rgba(0, 240, 255, 0.25);
+      --border-glow: 0 0 15px rgba(0, 240, 255, 0.2);
+      --autozone-red: #ff003c;
+      --autozone-glow: 0 0 15px rgba(255, 0, 60, 0.6);
+      --autozone-orange: #ff7700;
+      --input-bg: rgba(30, 41, 59, 0.8);
+      --accent-cyan: #00f0ff;
     }
 
     [data-theme="light"] {
-      --bg-primary: #f0f2f5;
-      --bg-secondary: #ffffff;
-      --bg-card: #ffffff;
-      --text-main: #1c1e21;
-      --text-muted: #65676b;
-      --border-color: #e4e6eb;
+      --bg-main: #edf2f7;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --bg-panel: #ffffff;
+      --text-bright: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-neon: rgba(2, 132, 199, 0.3);
+      --border-glow: 0 0 10px rgba(2, 132, 199, 0.15);
       --autozone-red: #d8232a;
-      --autozone-orange: #f37021;
-      --autozone-hover: #b81c22;
-      --input-bg: #f5f6f7;
+      --autozone-glow: 0 0 10px rgba(216, 35, 42, 0.3);
+      --autozone-orange: #ea580c;
+      --input-bg: #f1f5f9;
+      --accent-cyan: #0284c7;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      transition: background-color 0.3s, color 0.3s;
+      font-family: 'Rajdhani', sans-serif;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
 
     body {
-      background-color: var(--bg-primary);
+      background: var(--bg-main);
       color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(255, 0, 60, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(0, 240, 255, 0.08) 0%, transparent 40%);
     }
 
-    /* TOP HEADER & BRANDING */
+    /* HEADER CYBER */
     header {
-      background-color: var(--bg-secondary);
-      border-bottom: 3px solid var(--autozone-red);
-      padding: 12px 24px;
+      background: var(--bg-panel);
+      border-bottom: 2px solid var(--autozone-red);
+      box-shadow: var(--autozone-glow);
+      padding: 12px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 10;
     }
 
-    .brand-container {
+    .brand-box {
       display: flex;
-      align-items: baseline;
-      gap: 12px;
+      align-items: center;
+      gap: 14px;
     }
 
-    /* ESTILO DA LOGO AUTOZONE */
     .brand-logo {
-      font-size: 2.2rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.3rem;
       font-weight: 900;
       font-style: italic;
       color: var(--autozone-red);
-      letter-spacing: -1px;
       text-transform: uppercase;
-      text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-    }
-
-    .brand-logo span {
-      color: var(--text-main);
+      letter-spacing: 2px;
+      text-shadow: var(--autozone-glow);
     }
 
     .brand-tag {
-      background: var(--autozone-red);
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(90deg, var(--autozone-red), var(--autozone-orange));
       color: #fff;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(255,0,60,0.4);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* BOTÃO DE TEMA */
-    .theme-toggle-btn {
-      background-color: var(--input-bg);
+    /* BOTÕES HUD */
+    .hud-btn {
+      background: var(--input-bg);
       color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 8px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
+      border: 1px solid var(--border-neon);
+      padding: 8px 18px;
+      border-radius: 4px;
+      font-weight: 700;
       font-size: 0.9rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .theme-toggle-btn:hover {
-      border-color: var(--autozone-red);
+    .hud-btn:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: var(--border-glow);
+      color: var(--accent-cyan);
     }
 
-    /* BOTÃO IMPORTAR BASE */
-    .btn-import {
-      background-color: var(--autozone-red);
+    .hud-btn-primary {
+      background: linear-gradient(135deg, var(--autozone-red), #b3002d);
       color: #fff;
       border: none;
-      padding: 9px 18px;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      box-shadow: var(--autozone-glow);
     }
 
-    .btn-import:hover {
-      background-color: var(--autozone-hover);
+    .hud-btn-primary:hover {
+      background: linear-gradient(135deg, #ff2a5c, var(--autozone-red));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.8);
     }
 
-    #fileInput {
-      display: none;
-    }
-
-    /* LAYOUT PRINCIPAL */
-    .main-container {
+    /* LAYOUT DA PÁGINA */
+    .main-wrapper {
       display: flex;
       flex: 1;
-      overflow: hidden;
     }
 
     .content-area {
       flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-    }
-
-    /* PAINEL LATERAL DIREITO */
-    .sidebar-right {
-      width: 320px;
-      background-color: var(--bg-secondary);
-      border-left: 1px solid var(--border-color);
-      padding: 20px;
+      padding: 20px 24px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+      gap: 20px;
     }
 
-    .sidebar-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-main);
+    /* PAINEL DE FILTROS DE DATA */
+    .date-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-neon);
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: var(--border-glow);
+    }
+
+    .date-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      color: var(--accent-cyan);
       display: flex;
       align-items: center;
       gap: 8px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    /* FILTROS DE DATA */
-    .date-filter-section {
-      background: var(--bg-card);
-      padding: 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 20px;
-    }
-
-    .filter-group {
+    .date-inputs {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      gap: 16px;
+      align-items: center;
     }
 
-    .filter-group label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .filter-control {
-      background-color: var(--input-bg);
+    .input-ctrl {
+      background: var(--input-bg);
       color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      outline: none;
-      width: 100%;
-    }
-
-    .filter-control:focus {
-      border-color: var(--autozone-red);
-    }
-
-    .preset-dates {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .btn-preset {
-      background-color: var(--input-bg);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 6px 10px;
+      border: 1px solid var(--border-neon);
+      padding: 6px 12px;
       border-radius: 4px;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 600;
+      outline: none;
+    }
+
+    .input-ctrl:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: var(--border-glow);
+    }
+
+    .preset-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: var(--input-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-neon);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
       cursor: pointer;
+      text-transform: uppercase;
     }
 
-    .btn-preset:hover, .btn-preset.active {
-      background-color: var(--autozone-red);
-      color: #fff;
-      border-color: var(--autozone-red);
+    .preset-btn:hover, .preset-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      box-shadow: var(--border-glow);
     }
 
-    /* CARDS DE MÉTRICAS */
+    /* GRID DE KPIS */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
-      margin-bottom: 24px;
     }
 
     .kpi-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-neon);
       border-radius: 8px;
-      padding: 18px;
-      border-left: 4px solid var(--autozone-red);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .kpi-card h4 {
-      font-size: 0.85rem;
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent-cyan);
+      box-shadow: var(--border-glow);
+    }
+
+    .kpi-card.red::before {
+      background: var(--autozone-red);
+      box-shadow: var(--autozone-glow);
+    }
+
+    .kpi-card.orange::before {
+      background: var(--autozone-orange);
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
-    .kpi-card .value {
-      font-size: 1.8rem;
+    .kpi-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
       font-weight: 800;
       color: var(--text-main);
+      margin-top: 6px;
     }
 
-    /* TABELA E GRÁFICOS */
-    .dashboard-row {
+    /* DASHBOARD BODY (TABELA & GRÁFICO) */
+    .dash-row {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 2.2fr 1fr;
       gap: 20px;
-      margin-bottom: 24px;
     }
 
-    .card-box {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
+    .hud-box {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-neon);
       border-radius: 8px;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .table-container {
-      max-height: 400px;
+    .table-responsive {
+      max-height: 420px;
       overflow-y: auto;
+      margin-top: 12px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-
-    th, td {
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
     }
 
     th {
-      background-color: var(--bg-secondary);
-      color: var(--text-muted);
-      font-weight: 700;
+      background: var(--bg-panel);
+      color: var(--accent-cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px;
+      text-align: left;
       position: sticky;
       top: 0;
+      border-bottom: 2px solid var(--border-neon);
     }
 
-    /* NOTIFICAÇÃO DE PERSISTÊNCIA */
-    .status-badge {
-      font-size: 0.78rem;
-      padding: 4px 8px;
-      border-radius: 12px;
-      background-color: rgba(40, 167, 69, 0.2);
-      color: #28a745;
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-weight: 600;
+    }
+
+    tr:hover td {
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    /* SIDEBAR DIREITA DE FILTROS DA PLANILHA */
+    .sidebar-right {
+      width: 310px;
+      background: var(--bg-panel);
+      border-left: 2px solid var(--border-neon);
+      padding: 24px 18px;
       display: flex;
-      align-items: center;
-      gap: 5px;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+    }
+
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-field label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .filter-field input, .filter-field select {
+      background: var(--input-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-neon);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .filter-field input:focus, .filter-field select:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: var(--border-glow);
     }
   </style>
 </head>
 <body>
 
-  <!-- CABEÇALHO COM BRANDING E MODO ESCURO -->
+  <!-- CABEÇALHO FUTURISTA AUTOZONE -->
   <header>
-    <div class="brand-container">
+    <div class="brand-box">
       <div class="brand-logo">AutoZone</div>
       <div class="brand-tag">Inbound Operations</div>
     </div>
     
-    <div class="header-actions">
-      <span id="dataStatus" class="status-badge"><i class="fa-solid fa-database"></i> Base Persistida</span>
+    <div class="header-controls">
+      <div id="dataStatus" class="status-badge">
+        <i class="fa-solid fa-microchip"></i> Data Persisted
+      </div>
       
-      <button class="btn-import" onclick="document.getElementById('fileInput').click()">
-        <i class="fa-solid fa-file-import"></i> Importar Base
+      <button class="hud-btn hud-btn-primary" onclick="document.getElementById('fileInput').click()">
+        <i class="fa-solid fa-upload"></i> Importar Base
       </button>
-      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" onchange="handleFileUpload(event)">
+      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleFileUpload(event)">
       
-      <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeBtn">
-        <i class="fa-solid fa-moon"></i> Escuro
+      <button class="hud-btn" onclick="toggleTheme()" id="themeBtn">
+        <i class="fa-solid fa-moon"></i> Dark HUD
       </button>
     </div>
   </header>
 
-  <!-- FILTROS DE DATA RÁPIDOS -->
-  <div style="padding: 16px 24px 0 24px;">
-    <div class="date-filter-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <span style="font-weight: 700; font-size: 0.95rem;"><i class="fa-solid fa-calendar-days" style="color: var(--autozone-red);"></i> Filtro por Período de Recebimento</span>
-        <div style="display: flex; gap: 12px; align-items: center;">
-          <div class="filter-group" style="flex-direction: row; align-items: center;">
-            <label style="margin-right: 5px;">De:</label>
-            <input type="date" id="dateStart" class="filter-control" onchange="applyFilters()">
-          </div>
-          <div class="filter-group" style="flex-direction: row; align-items: center;">
-            <label style="margin-right: 5px;">Até:</label>
-            <input type="date" id="dateEnd" class="filter-control" onchange="applyFilters()">
-          </div>
+  <!-- PAINEL DE CONTROLE DE DATAS -->
+  <div style="padding: 20px 24px 0 24px;">
+    <div class="date-panel">
+      <div class="date-panel-header">
+        <div class="panel-title">
+          <i class="fa-solid fa-calendar-check" style="color: var(--autozone-red);"></i> Período de Recebimento Inbound
+        </div>
+        <div class="date-inputs">
+          <label style="font-size:0.85rem; font-weight:700;">DE:</label>
+          <input type="date" id="dateStart" class="input-ctrl" onchange="applyFilters()">
+          <label style="font-size:0.85rem; font-weight:700;">ATÉ:</label>
+          <input type="date" id="dateEnd" class="input-ctrl" onchange="applyFilters()">
         </div>
       </div>
       
-      <div class="preset-dates">
-        <button class="btn-preset active" onclick="setPresetDate('all')">Todo o Período</button>
-        <button class="btn-preset" onclick="setPresetDate('today')">Hoje</button>
-        <button class="btn-preset" onclick="setPresetDate('7days')">Últimos 7 dias</button>
-        <button class="btn-preset" onclick="setPresetDate('30days')">Últimos 30 dias</button>
-        <button class="btn-preset" onclick="setPresetDate('month')">Mês Atual</button>
+      <div class="preset-group">
+        <button class="preset-btn active" onclick="setPresetDate('all')">Todo o Período</button>
+        <button class="preset-btn" onclick="setPresetDate('today')">Hoje</button>
+        <button class="preset-btn" onclick="setPresetDate('7days')">Últimos 7 dias</button>
+        <button class="preset-btn" onclick="setPresetDate('30days')">Últimos 30 dias</button>
+        <button class="preset-btn" onclick="setPresetDate('month')">Mês Atual</button>
       </div>
     </div>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <div class="main-container">
+  <!-- WRAPPER CONTEÚDO + SIDEBAR -->
+  <div class="main-wrapper">
     
-    <!-- ÁREA DE GRÁFICOS E TABELAS -->
+    <!-- ÁREA PRINCIPAL -->
     <div class="content-area">
-      <!-- CARDS KPIS -->
+      <!-- KPIS -->
       <div class="kpi-grid">
+        <div class="kpi-card red">
+          <div class="kpi-label">Total Recebimentos</div>
+          <div class="kpi-value" id="kpiTotal">0</div>
+        </div>
         <div class="kpi-card">
-          <h4>Total de Recebimentos</h4>
-          <div class="value" id="kpiTotal">0</div>
+          <div class="kpi-label">SKUs Processados</div>
+          <div class="kpi-value" id="kpiSkus">0</div>
         </div>
-        <div class="kpi-card" style="border-left-color: var(--autozone-orange);">
-          <h4>SKUs Processados</h4>
-          <div class="value" id="kpiSkus">0</div>
+        <div class="kpi-card orange">
+          <div class="kpi-label">Total de Volumes</div>
+          <div class="kpi-value" id="kpiVolumes">0</div>
         </div>
-        <div class="kpi-card" style="border-left-color: #28a745;">
-          <h4>Total de Volumes</h4>
-          <div class="value" id="kpiVolumes">0</div>
-        </div>
-        <div class="kpi-card" style="border-left-color: #007bff;">
-          <h4>Docas Ativas</h4>
-          <div class="value" id="kpiDocas">0</div>
+        <div class="kpi-card">
+          <div class="kpi-label">Docas Ativas</div>
+          <div class="kpi-value" id="kpiDocas">0</div>
         </div>
       </div>
 
-      <!-- PAINEL CENTRAL -->
-      <div class="dashboard-row">
-        <div class="card-box">
-          <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-list-check"></i> Registros de Entrada / Inbound</h3>
-          <div class="table-container">
-            <table id="dataTable">
+      <!-- TABELA E GRÁFICO -->
+      <div class="dash-row">
+        <div class="hud-box">
+          <div class="panel-title" style="margin-bottom: 8px;">
+            <i class="fa-solid fa-table-list"></i> Registro de Cargas & Recebimento
+          </div>
+          <div class="table-responsive">
+            <table>
               <thead>
                 <tr>
                   <th>Data</th>
@@ -411,48 +497,47 @@
                   <th>Fornecedor</th>
                   <th>Status</th>
                   <th>Doca</th>
-                  <th>Qtd Volumes</th>
+                  <th>Volumes</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Nenhum dado importado. Clique em "Importar Base".</td></tr>
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum dado importado. Clique em "Importar Base".</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- GRÁFICO DE STATUS DE RECEBIMENTO -->
-        <div class="card-box">
-          <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-pie"></i> Status Inbound</h3>
-          <canvas id="statusChart" style="max-height: 300px;"></canvas>
+        <!-- GRÁFICO DE STATUS -->
+        <div class="hud-box">
+          <div class="panel-title" style="margin-bottom: 16px;">
+            <i class="fa-solid fa-chart-pie"></i> Status Inbound
+          </div>
+          <canvas id="statusChart" style="max-height: 280px;"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- SIDEBAR DE FILTROS DIREITA (COM NOMES DA PLANILHA AUTOZONE) -->
+    <!-- SIDEBAR DE FILTROS PADRÃO PLANILHA -->
     <div class="sidebar-right">
-      <div class="sidebar-title">
-        <i class="fa-solid fa-filter" style="color: var(--autozone-red);"></i> Filtros da Planilha
+      <div class="panel-title" style="border-bottom: 1px solid var(--border-neon); padding-bottom: 10px;">
+        <i class="fa-solid fa-sliders" style="color: var(--autozone-red);"></i> Filtros Inbound
       </div>
 
-      <!-- FILTRO: SKU / PART NUMBER -->
-      <div class="filter-group">
+      <div class="filter-field">
         <label><i class="fa-solid fa-barcode"></i> SKU / Part Number</label>
-        <input type="text" id="filterSku" class="filter-control" placeholder="Buscar por código..." oninput="applyFilters()">
+        <input type="text" id="filterSku" placeholder="Filtrar por código..." oninput="applyFilters()">
       </div>
 
-      <!-- FILTRO: FORNECEDOR / VENDOR -->
-      <div class="filter-group">
+      <div class="filter-field">
         <label><i class="fa-solid fa-truck-field"></i> Fornecedor / Vendor</label>
-        <select id="filterVendor" class="filter-control" onchange="applyFilters()">
+        <select id="filterVendor" onchange="applyFilters()">
           <option value="">Todos os Fornecedores</option>
         </select>
       </div>
 
-      <!-- FILTRO: STATUS INBOUND -->
-      <div class="filter-group">
-        <label><i class="fa-solid fa-tasks"></i> Status de Recebimento</label>
-        <select id="filterStatus" class="filter-control" onchange="applyFilters()">
+      <div class="filter-field">
+        <label><i class="fa-solid fa-clipboard-check"></i> Status Recebimento</label>
+        <select id="filterStatus" onchange="applyFilters()">
           <option value="">Todos os Status</option>
           <option value="Conferência">Conferência Física/DANFE</option>
           <option value="Sortimento">Sortimento / POP</option>
@@ -461,10 +546,9 @@
         </select>
       </div>
 
-      <!-- FILTRO: TIPO DE VEÍCULO -->
-      <div class="filter-group">
+      <div class="filter-field">
         <label><i class="fa-solid fa-truck-moving"></i> Tipo de Veículo</label>
-        <select id="filterVehicle" class="filter-control" onchange="applyFilters()">
+        <select id="filterVehicle" onchange="applyFilters()">
           <option value="">Todos os Veículos</option>
           <option value="Carreta">Carreta</option>
           <option value="Truck">Truck</option>
@@ -474,31 +558,28 @@
         </select>
       </div>
 
-      <!-- FILTRO: DOCA -->
-      <div class="filter-group">
-        <label><i class="fa-solid fa-warehouse"></i> Doca de Recebimento</label>
-        <input type="text" id="filterDoca" class="filter-control" placeholder="Ex: Doca 01" oninput="applyFilters()">
+      <div class="filter-field">
+        <label><i class="fa-solid fa-warehouse"></i> Doca de Entrada</label>
+        <input type="text" id="filterDoca" placeholder="Ex: Doca 01" oninput="applyFilters()">
       </div>
 
-      <button class="btn-preset" style="margin-top: auto; padding: 10px;" onclick="resetFilters()">
-        <i class="fa-solid fa-rotate-left"></i> Limpar Filtros
+      <button class="hud-btn" style="margin-top: auto; justify-content: center;" onclick="resetFilters()">
+        <i class="fa-solid fa-rotate-left"></i> Resetar Filtros
       </button>
     </div>
 
   </div>
 
   <script>
-    // ESTADO DA APLICAÇÃO E PERSISTÊNCIA
     let globalData = [];
     let myChart = null;
 
-    // INICIALIZAÇÃO
     document.addEventListener("DOMContentLoaded", () => {
       loadTheme();
       loadStoredData();
     });
 
-    // MODO ESCURO / CLARO
+    // MODO ESCURO / CLARO FUTURISTA
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute("data-theme");
       const newTheme = currentTheme === "dark" ? "light" : "dark";
@@ -516,19 +597,19 @@
     function updateThemeButton(theme) {
       const btn = document.getElementById("themeBtn");
       if (theme === "light") {
-        btn.innerHTML = `<i class="fa-solid fa-sun"></i> Claro`;
+        btn.innerHTML = `<i class="fa-solid fa-sun"></i> Light Lab`;
       } else {
-        btn.innerHTML = `<i class="fa-solid fa-moon"></i> Escuro`;
+        btn.innerHTML = `<i class="fa-solid fa-moon"></i> Dark HUD`;
       }
     }
 
-    // PERSISTÊNCIA DE DADOS (LOCALSTORAGE)
+    // LOCALSTORAGE / PERSISTÊNCIA AUTOMÁTICA
     function saveDataToStorage(data) {
       try {
         localStorage.setItem("autozone_inbound_data", JSON.stringify(data));
         document.getElementById("dataStatus").style.display = "flex";
       } catch (e) {
-        console.error("Erro ao salvar dados no navegador:", e);
+        console.error("Erro ao salvar dados localmente:", e);
       }
     }
 
@@ -540,14 +621,14 @@
           populateVendorDropdown();
           applyFilters();
         } catch (e) {
-          console.error("Erro ao carregar dados salvos:", e);
+          console.error("Erro ao carregar dados do localStorage:", e);
         }
       } else {
         document.getElementById("dataStatus").style.display = "none";
       }
     }
 
-    // UPLOAD E LEITURA DE PLANILHAS
+    // UPLOAD E PARSER DE EXCEL / CSV
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -560,7 +641,6 @@
         const worksheet = workbook.Sheets[firstSheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
-        // Normalização dos campos para padrão do Inbound
         globalData = jsonData.map(row => ({
           data: row["Data"] || row["DATA"] || row["Data de Recebimento"] || new Date().toISOString().split('T')[0],
           sku: row["SKU"] || row["Sku"] || row["Código"] || "N/A",
@@ -591,7 +671,7 @@
       });
     }
 
-    // APLICAÇÃO DE FILTROS E RENDERIZAÇÃO
+    // FILTROS
     function applyFilters() {
       const skuFilter = document.getElementById("filterSku").value.toLowerCase();
       const vendorFilter = document.getElementById("filterVendor").value;
@@ -619,7 +699,7 @@
     }
 
     function setPresetDate(preset) {
-      document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
 
       const today = new Date();
@@ -661,26 +741,24 @@
     }
 
     function renderDashboard(data) {
-      // KPIs
       document.getElementById("kpiTotal").textContent = data.length;
       document.getElementById("kpiSkus").textContent = new Set(data.map(d => d.sku)).size;
       document.getElementById("kpiVolumes").textContent = data.reduce((acc, curr) => acc + (curr.volumes || 0), 0);
       document.getElementById("kpiDocas").textContent = new Set(data.map(d => d.doca)).size;
 
-      // Tabela
       const tbody = document.getElementById("tableBody");
       tbody.innerHTML = "";
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Nenhum registro encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum registro encontrado.</td></tr>`;
       } else {
         data.slice(0, 50).forEach(item => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${item.data}</td>
-            <td><strong>${item.sku}</strong></td>
+            <td style="color: var(--accent-cyan);"><strong>${item.sku}</strong></td>
             <td>${item.descricao}</td>
             <td>${item.fornecedor}</td>
-            <td><span style="color: var(--autozone-orange); font-weight:600;">${item.status}</span></td>
+            <td><span style="color: var(--autozone-orange);">${item.status}</span></td>
             <td>${item.doca}</td>
             <td>${item.volumes}</td>
           `;
@@ -688,7 +766,6 @@
         });
       }
 
-      // Gráfico Status
       renderChart(data);
     }
 
@@ -708,13 +785,21 @@
           labels: Object.keys(statusCounts),
           datasets: [{
             data: Object.values(statusCounts),
-            backgroundColor: ['#d8232a', '#f37021', '#28a745', '#007bff', '#6c757d']
+            backgroundColor: ['#ff003c', '#ff7700', '#00f0ff', '#28a745', '#6c757d'],
+            borderWidth: 2,
+            borderColor: 'transparent'
           }]
         },
         options: {
           responsive: true,
           plugins: {
-            legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-main') } }
+            legend: { 
+              position: 'bottom', 
+              labels: { 
+                color: getComputedStyle(document.body).getPropertyValue('--text-main'),
+                font: { family: 'Rajdhani', size: 13, weight: '600' }
+              } 
+            }
           }
         }
       });
